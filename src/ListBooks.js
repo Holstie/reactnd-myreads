@@ -6,10 +6,13 @@ import { Link } from 'react-router-dom'
 class ListBooks extends Component {
     static propTypes = {
         changeBookShelf: PropTypes.func.isRequired,
-        books: PropTypes.array.isRequired
+        books: PropTypes.array.isRequired,
+        getOurBooks: PropTypes.func.isRequired,
     }
 
-
+    componentDidMount() {
+        this.props.getOurBooks();
+    }
 
     render() {
         const currentlyReadingBooks = this.props.books.filter(book => {

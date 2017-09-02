@@ -10,11 +10,11 @@ class BooksApp extends React.Component {
     books: []
   }
 
-  componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ books })
-      this.setState({ read: books.filter((book) => book.shelf === 'read') })
-    })
+  getOurBooks = () => {
+    BooksAPI.getAll()
+      .then(books => {
+        this.setState({ books });
+      })
   }
 
   changeBookShelf = (originalBook, shelf) => {
@@ -31,16 +31,41 @@ class BooksApp extends React.Component {
       });
   }
 
+  searchBooks = (query) => {
+    if (query) {
+      BooksAPI.getAll()
+        .then(booksAPI => {
+          BooksAPI.search(query)
+            .then(response => {
+              let books = response;
+              books = books.map(book => {
+                return book;
+              });
+              if (this.state.books !== books) {
+                this.setState({ books });
+              }
+            });
+        })
+    } else {
+      this.setState({ books: [] });
+    }
+  }
+
   render() {
     return (
       <div className="app">
         <Route exact path="/search" render={() => (
-          <SearchBooks></SearchBooks>
+          <SearchBooks
+            searchBooks={this.searchBooks}
+            changeBookShelf={this.changeBookShelf}
+            books={this.state.books}
+          />
         )} />
         <Route exact path="/" render={() => (
           <ListBooks
             changeBookShelf={this.changeBookShelf}
             books={this.state.books}
+            getOurBooks={this.getOurBooks}
           />
         )} />
       </div>
