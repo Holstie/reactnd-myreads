@@ -37,12 +37,25 @@ class BooksApp extends React.Component {
         .then(booksAPI => {
           BooksAPI.search(query)
             .then(response => {
-              let books = response;
-              books = books.map(book => {
-                return book;
-              });
-              if (this.state.books !== books) {
-                this.setState({ books });
+              let books = [];
+              if (Array.isArray(response)) {
+                books = response;
+              }
+              if (Array.isArray(response.books)) {
+                books = response.books;
+              }
+              if (books) {
+                books = books.map(book => {
+                  const bookAPI = booksAPI.find(bookAPI => bookAPI.id === book.id);
+                  if (bookAPI) {
+                    return bookAPI;
+                  } else {
+                    return book;
+                  }
+                });
+                if (this.state.books !== books) {
+                  this.setState({ books });
+                }
               }
             });
         })
